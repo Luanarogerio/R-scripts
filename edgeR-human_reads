@@ -179,3 +179,149 @@ plotMD(qlf12)
 abline(h=c(-1,1), col="blue")
 
 #--
+
+#FDR = 0 for creating the Principal component analysis (PCA)
+
+qlf1 <- glmQLFTest(fit, contrast=c(0.25, 0, 0, 0.25, 0, 0, 0.25, 0, 0, 0.25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0))
+o1 <- order(qlf1$table$PValue)
+FDR <- p.adjust(qlf1$table$PValue, method="BH")
+t1 <- topTags(qlf1,n=sum(FDR > 0))
+write.table(t1,"Crithidia_LVH60-4h_MO", sep ="\t")
+
+summary(decideTests(qlf1))
+plotMD(qlf1)
+abline(h=c(-1,1), col="blue")
+
+#--
+
+qlf2 <- glmQLFTest(fit, contrast=c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.33333, 0, 0, 0.33333, 0, 0, 0.33333, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0))
+o2 <- order(qlf2$table$PValue)
+FDR <- p.adjust(qlf2$table$PValue, method="BH")
+t2 <- topTags(qlf2,n=sum(FDR > 0))
+write.table(t2,"Linf-4h_MO", sep ="\t")
+
+summary(decideTests(qlf2))
+plotMD(qlf2)
+abline(h=c(-1,1), col="blue")
+
+#--
+
+qlf3 <- glmQLFTest(fit, contrast=c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0))
+o3 <- order(qlf3$table$PValue)
+FDR <- p.adjust(qlf3$table$PValue, method="BH")
+t3 <- topTags(qlf3,n=sum(FDR > 0))
+write.table(t3,"Lmajor-4h_MO", sep ="\t")
+
+summary(decideTests(qlf3))
+plotMD(qlf3)
+abline(h=c(-1,1), col="blue")
+
+#--
+
+qlf4 <- glmQLFTest(fit, contrast=c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0))
+o4 <- order(qlf4$table$PValue)
+FDR <- p.adjust(qlf4$table$PValue, method="BH")
+t4 <- topTags(qlf4,n=sum(FDR > 0))
+write.table(t4,"Cfas-4h_MO", sep ="\t")
+
+summary(decideTests(qlf4))
+plotMD(qlf4)
+abline(h=c(-1,1), col="blue")
+
+#--
+
+
+qlf5 <- glmQLFTest(fit, contrast=c(0, 0.25, 0, 0, 0.25, 0, 0, 0.25, 0, 0, 0.25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0))
+o5 <- order(qlf5$table$PValue)
+FDR <- p.adjust(qlf5$table$PValue, method="BH")
+t5 <- topTags(qlf5,n=sum(FDR > 0))
+write.table(t5,"Crithidia_LVH60-24h_MO", sep ="\t")
+
+summary(decideTests(qlf5))
+plotMD(qlf5)
+abline(h=c(-1,1), col="blue")
+
+#--
+
+qlf6 <- glmQLFTest(fit, contrast=c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.33333, 0, 0, 0.33333, 0, 0, 0.33333, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0))
+o6 <- order(qlf6$table$PValue)
+FDR <- p.adjust(qlf6$table$PValue, method="BH")
+t6 <- topTags(qlf6,n=sum(FDR > 0))
+write.table(t6,"Linf-24h_MO", sep ="\t")
+
+summary(decideTests(qlf6))
+plotMD(qlf6)
+abline(h=c(-1,1), col="blue")
+
+#--
+
+qlf7 <- glmQLFTest(fit, contrast=c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0))
+o7 <- order(qlf7$table$PValue)
+FDR <- p.adjust(qlf7$table$PValue, method="BH")
+t7 <- topTags(qlf7,n=sum(FDR > 0))
+write.table(t7,"Lmajor-24h_MO", sep ="\t")
+
+summary(decideTests(qlf7))
+plotMD(qlf7)
+abline(h=c(-1,1), col="blue")
+
+#--
+
+qlf8 <- glmQLFTest(fit, contrast=c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0))
+o8 <- order(qlf8$table$PValue)
+FDR <- p.adjust(qlf8$table$PValue, method="BH")
+t8 <- topTags(qlf8,n=sum(FDR > 0))
+write.table(t8,"Cfas-24h_MO", sep ="\t")
+
+summary(decideTests(qlf4))
+plotMD(qlf4)
+abline(h=c(-1,1), col="blue")
+
+#--
+
+qlf9 <- glmQLFTest(fit, contrast=c(0, 0, 0.25, 0, 0, 0.25, 0, 0, 0.25, 0, 0, 0.25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0))
+o9 <- order(qlf9$table$PValue)
+FDR <- p.adjust(qlf9$table$PValue, method="BH")
+t9 <- topTags(qlf9,n=sum(FDR > 0))
+write.table(t9,"Crithidia_LVH60-48h_MO", sep ="\t")
+
+summary(decideTests(qlf9))
+plotMD(qlf9)
+abline(h=c(-1,1), col="blue")
+
+#--
+
+qlf10 <- glmQLFTest(fit, contrast=c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.33333, 0, 0, 0.33333, 0, 0, 0.33333, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0))
+o10 <- order(qlf10$table$PValue)
+FDR <- p.adjust(qlf10$table$PValue, method="BH")
+t10 <- topTags(qlf10,n=sum(FDR > 0))
+write.table(t10,"Linf-48h_MO", sep ="\t")
+
+summary(decideTests(qlf10))
+plotMD(qlf10)
+abline(h=c(-1,1), col="blue")
+
+#--
+
+qlf11 <- glmQLFTest(fit, contrast=c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0, 0))
+o11 <- order(qlf11$table$PValue)
+FDR <- p.adjust(qlf11$table$PValue, method="BH")
+t11 <- topTags(qlf11,n=sum(FDR > 0))
+write.table(t11,"Lmajor-48h_MO", sep ="\t")
+
+summary(decideTests(qlf11))
+plotMD(qlf11)
+abline(h=c(-1,1), col="blue")
+
+#--
+
+qlf12 <- glmQLFTest(fit, contrast=c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0))
+o12 <- order(qlf12$table$PValue)
+FDR <- p.adjust(qlf12$table$PValue, method="BH")
+t12 <- topTags(qlf12,n=sum(FDR > 0))
+write.table(t12,"Cfas-48h_MO", sep ="\t")
+
+summary(decideTests(qlf12))
+plotMD(qlf12)
+abline(h=c(-1,1), col="blue")
+
