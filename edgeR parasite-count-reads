@@ -1,0 +1,210 @@
+library(edgeR)
+
+x <- read.delim("read_count_parasites.txt", header = TRUE, row.names="Symbol", sep ="\t")
+x <- as.matrix(x)
+head(x)
+
+Parasite <- factor(substring(colnames(x),2,5))
+Batch <- factor(substring(colnames(x),1,1))
+Time <- factor(substring(colnames(x),5,6))
+
+y <- DGEList(counts=x, group=Parasite)
+
+#Filtering and normalization
+
+keep <- filterByExpr(y)
+table(keep)
+
+y <- y[keep, , keep.lib.sizes=FALSE]
+y <- calcNormFactors(y)
+y$samples
+
+#Data exploration
+plotMDS(y, col=rep(1:9, each=3))
+
+#design2
+design2 <- model.matrix(~0+Parasite+Batch)
+rownames(design2) <- colnames(y)
+design2
+
+#The tagwise dispersion approach is strongly recommended in multi-factor experiment cases (edgeR page 21)
+y <- estimateGLMCommonDisp(y, design2, verbose=TRUE)
+y <- estimateGLMTrendedDisp(y, design2)
+y <- estimateGLMTagwiseDisp(y, design2)
+fit <- glmQLFit(y, design2)
+
+colnames(fit)
+
+qlf1 <- glmQLFTest(fit, contrast=c(0.25, 0, 0, 0.25, 0, 0, 0.25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0))
+o1 <- order(qlf1$table$PValue)
+FDR <- p.adjust(qlf1$table$PValue, method="BH")
+t1 <- topTags(qlf1,n=sum(FDR < 0.01))
+write.table(t1,"Crithidia_LVH60vsCfas-4h", sep ="\t")
+
+summary(decideTests(qlf1))
+plotMD(qlf1)
+abline(h=c(-1,1), col="blue")
+
+#--
+
+qlf2 <- glmQLFTest(fit, contrast=c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.33333, 0, 0, 0.33333, 0, 0, 0.33333, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0))
+o2 <- order(qlf2$table$PValue)
+FDR <- p.adjust(qlf2$table$PValue, method="BH")
+t2 <- topTags(qlf2,n=sum(FDR < 0.01))
+write.table(t2,"LinfvsCfas-4h", sep ="\t")
+
+summary(decideTests(qlf2))
+plotMD(qlf2)
+abline(h=c(-1,1), col="blue")
+
+#--
+
+qlf3 <- glmQLFTest(fit, contrast=c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0))
+o3 <- order(qlf3$table$PValue)
+FDR <- p.adjust(qlf3$table$PValue, method="BH")
+t3 <- topTags(qlf3,n=sum(FDR < 0.01))
+write.table(t3,"LmajorvsCfas-4h", sep ="\t")
+
+summary(decideTests(qlf3))
+plotMD(qlf3)
+abline(h=c(-1,1), col="blue")
+
+
+qlf10 <- glmQLFTest(fit, contrast=c(0, 0.25, 0, 0, 0.25, 0, 0, 0.25, 0, 0, 0.25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0))
+o10 <- order(qlf10$table$PValue)
+FDR <- p.adjust(qlf10$table$PValue, method="BH")
+t10 <- topTags(qlf10,n=sum(FDR < 0.01))
+write.table(t10,"Crithidia_LVH60-Cfas-24h", sep ="\t")
+
+summary(decideTests(qlf10))
+plotMD(qlf10)
+abline(h=c(-1,1), col="blue")
+
+#--
+
+qlf11 <- glmQLFTest(fit, contrast=c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.33333, 0, 0, 0.33333, 0, 0, 0.33333, 0, 0, 0, 0, 0, -1, 0, 0, 0))
+o11 <- order(qlf11$table$PValue)
+FDR <- p.adjust(qlf11$table$PValue, method="BH")
+t11 <- topTags(qlf11,n=sum(FDR < 0.01))
+write.table(t11,"Linf-Cfas-24h", sep ="\t")
+
+summary(decideTests(qlf11))
+plotMD(qlf11)
+abline(h=c(-1,1), col="blue")
+
+#--
+
+qlf12 <- glmQLFTest(fit, contrast=c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0))
+o12 <- order(qlf12$table$PValue)
+FDR <- p.adjust(qlf12$table$PValue, method="BH")
+t12 <- topTags(qlf12,n=sum(FDR < 0.01))
+write.table(t12,"Lmajor-Cfas-24h", sep ="\t")
+
+summary(decideTests(qlf12))
+plotMD(qlf12)
+abline(h=c(-1,1), col="blue")
+
+#--
+
+qlf19 <- glmQLFTest(fit, contrast=c(0, 0, 0.25, 0, 0, 0.25, 0, 0, 0.25, 0, 0, 0.25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0))
+o19 <- order(qlf19$table$PValue)
+FDR <- p.adjust(qlf19$table$PValue, method="BH")
+t19 <- topTags(qlf19,n=sum(FDR < 0.01))
+write.table(t19,"Crithidia_LVH60vsCfas-48h", sep ="\t")
+
+summary(decideTests(qlf19))
+plotMD(qlf19)
+abline(h=c(-1,1), col="blue")
+
+#--
+
+qlf20 <- glmQLFTest(fit, contrast=c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.33333, 0, 0, 0.33333, 0, 0, 0.33333, 0, 0, 0, 0, 0, -1, 0, 0))
+o20 <- order(qlf20$table$PValue)
+FDR <- p.adjust(qlf20$table$PValue, method="BH")
+t20 <- topTags(qlf20,n=sum(FDR < 0.01))
+write.table(t20,"LinfvsCfas-48h", sep ="\t")
+
+summary(decideTests(qlf20))
+plotMD(qlf20)
+abline(h=c(-1,1), col="blue")
+
+#--
+qlf21 <- glmQLFTest(fit, contrast=c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0))
+o21 <- order(qlf21$table$PValue)
+FDR <- p.adjust(qlf21$table$PValue, method="BH")
+t21 <- topTags(qlf21,n=sum(FDR < 0.01))
+write.table(t21,"LmajorvsCfas-48h", sep ="\t")
+
+summary(decideTests(qlf21))
+plotMD(qlf21)
+abline(h=c(-1,1), col="blue")
+
+#FDR=O for PCA and volcano plot
+
+qlf1 <- glmQLFTest(fit, contrast=c(0.25, 0, 0, 0.25, 0, 0, 0.25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0))
+o1 <- order(qlf1$table$PValue)
+FDR <- p.adjust(qlf1$table$PValue, method="BH")
+t1 <- topTags(qlf1,n=sum(FDR > 0))
+write.table(t1,"Crithidia_LVH60vsCfas-4h", sep ="\t")
+
+#--
+
+qlf2 <- glmQLFTest(fit, contrast=c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.33333, 0, 0, 0.33333, 0, 0, 0.33333, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0))
+o2 <- order(qlf2$table$PValue)
+FDR <- p.adjust(qlf2$table$PValue, method="BH")
+t2 <- topTags(qlf2,n=sum(FDR > 0.0))
+write.table(t2,"LinfvsCfas-4h", sep ="\t")
+
+#--
+
+qlf3 <- glmQLFTest(fit, contrast=c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0))
+o3 <- order(qlf3$table$PValue)
+FDR <- p.adjust(qlf3$table$PValue, method="BH")
+t3 <- topTags(qlf3,n=sum(FDR > 0.0))
+write.table(t3,"LmajorvsCfas-4h", sep ="\t")
+
+qlf10 <- glmQLFTest(fit, contrast=c(0, 0.25, 0, 0, 0.25, 0, 0, 0.25, 0, 0, 0.25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0))
+o10 <- order(qlf10$table$PValue)
+FDR <- p.adjust(qlf10$table$PValue, method="BH")
+t10 <- topTags(qlf10,n=sum(FDR > 0.0))
+write.table(t10,"Crithidia_LVH60vsCfas-24h", sep ="\t")
+
+#--
+
+qlf11 <- glmQLFTest(fit, contrast=c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.33333, 0, 0, 0.33333, 0, 0, 0.33333, 0, 0, 0, 0, 0, -1, 0, 0, 0))
+o11 <- order(qlf11$table$PValue)
+FDR <- p.adjust(qlf11$table$PValue, method="BH")
+t11 <- topTags(qlf11,n=sum(FDR > 0.0))
+write.table(t11,"LinfvsCfas-24h", sep ="\t")
+
+#--
+
+qlf12 <- glmQLFTest(fit, contrast=c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0))
+o12 <- order(qlf12$table$PValue)
+FDR <- p.adjust(qlf12$table$PValue, method="BH")
+t12 <- topTags(qlf12,n=sum(FDR > 0.0))
+write.table(t12,"LmajorvsCfas-24h", sep ="\t")
+
+#--
+
+qlf19 <- glmQLFTest(fit, contrast=c(0, 0, 0.25, 0, 0, 0.25, 0, 0, 0.25, 0, 0, 0.25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0))
+o19 <- order(qlf19$table$PValue)
+FDR <- p.adjust(qlf19$table$PValue, method="BH")
+t19 <- topTags(qlf19,n=sum(FDR > 0.0))
+write.table(t19,"Crithidia_LVH60vsCfas-48h", sep ="\t")
+
+#--
+
+qlf20 <- glmQLFTest(fit, contrast=c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.33333, 0, 0, 0.33333, 0, 0, 0.33333, 0, 0, 0, 0, 0, -1, 0, 0))
+o20 <- order(qlf20$table$PValue)
+FDR <- p.adjust(qlf20$table$PValue, method="BH")
+t20 <- topTags(qlf20,n=sum(FDR > 0.0))
+write.table(t20,"LinfvsCfas-48h", sep ="\t")
+
+#--
+qlf21 <- glmQLFTest(fit, contrast=c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0))
+o21 <- order(qlf21$table$PValue)
+FDR <- p.adjust(qlf21$table$PValue, method="BH")
+t21 <- topTags(qlf21,n=sum(FDR > 0.0))
+write.table(t21,"LmajorvsCfas-48h", sep ="\t")
+
